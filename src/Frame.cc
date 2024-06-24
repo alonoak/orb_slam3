@@ -1147,18 +1147,18 @@ void Frame::ComputeStereoFishEyeMatches() {
     int descMatches = 0;
 
     //Check matches using Lowe's ratio
-    for(vector<vector<cv::DMatch>>::iterator it = matches.begin(); it != matches.end(); ++it){
-        if((*it).size() >= 2 && (*it)[0].distance < (*it)[1].distance * 0.7){
+    for(auto & matche : matches){
+        if(matche.size() >= 2 && matche[0].distance < matche[1].distance * 0.7){
             //For every good match, check parallax and reprojection error to discard spurious matches
             Eigen::Vector3f p3D;
             descMatches++;
-            float sigma1 = mvLevelSigma2[mvKeys[(*it)[0].queryIdx + monoLeft].octave], sigma2 = mvLevelSigma2[mvKeysRight[(*it)[0].trainIdx + monoRight].octave];
-            float depth = static_cast<KannalaBrandt8*>(mpCamera)->TriangulateMatches(mpCamera2,mvKeys[(*it)[0].queryIdx + monoLeft],mvKeysRight[(*it)[0].trainIdx + monoRight],mRlr,mtlr,sigma1,sigma2,p3D);
+            float sigma1 = mvLevelSigma2[mvKeys[matche[0].queryIdx + monoLeft].octave], sigma2 = mvLevelSigma2[mvKeysRight[matche[0].trainIdx + monoRight].octave];
+            float depth = dynamic_cast<KannalaBrandt8*>(mpCamera)->TriangulateMatches(mpCamera2,mvKeys[matche[0].queryIdx + monoLeft],mvKeysRight[matche[0].trainIdx + monoRight],mRlr,mtlr,sigma1,sigma2,p3D);
             if(depth > 0.0001f){
-                mvLeftToRightMatch[(*it)[0].queryIdx + monoLeft] = (*it)[0].trainIdx + monoRight;
-                mvRightToLeftMatch[(*it)[0].trainIdx + monoRight] = (*it)[0].queryIdx + monoLeft;
-                mvStereo3Dpoints[(*it)[0].queryIdx + monoLeft] = p3D;
-                mvDepth[(*it)[0].queryIdx + monoLeft] = depth;
+                mvLeftToRightMatch[matche[0].queryIdx + monoLeft] = matche[0].trainIdx + monoRight;
+                mvRightToLeftMatch[matche[0].trainIdx + monoRight] = matche[0].queryIdx + monoLeft;
+                mvStereo3Dpoints[matche[0].queryIdx + monoLeft] = p3D;
+                mvDepth[matche[0].queryIdx + monoLeft] = depth;
                 nMatches++;
             }
         }

@@ -161,10 +161,8 @@ namespace ORB_SLAM3
                     int bestIdx =-1 ;
 
                     // Get best and second matches with near keypoints
-                    for(vector<size_t>::const_iterator vit=vIndices.begin(), vend=vIndices.end(); vit!=vend; vit++)
+                    for(unsigned long idx : vIndices)
                     {
-                        const size_t idx = *vit;
-
                         if(F.mvpMapPoints[idx + F.Nleft])
                             if(F.mvpMapPoints[idx + F.Nleft]->Observations()>0)
                                 continue;
